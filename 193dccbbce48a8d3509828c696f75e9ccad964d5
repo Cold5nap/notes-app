@@ -1,0 +1,13 @@
+## Что сделано
+
+### Модель данных
+- Создана таблица \
+otes\ с полями: id, user_id, title, content, color, is_pinned, created_at, updated_at
+- Написаны SQL-миграции (up/down) через golang-migrate
+- Реализован слой repository с параметризованными запросами (без SQL-инъекций)
+- Определены структуры Note, NoteForm, Pagination, ValidationErrors
+
+### Ключевые решения
+- \user_id\ без внешнего ключа — в ТЗ нет таблицы users, тестовый режим
+- Prepared statements через  — защита от SQL-инъекций
+- \is_pinned DESC, updated_at DESC\ — закреплённые заметки всегда сверху
