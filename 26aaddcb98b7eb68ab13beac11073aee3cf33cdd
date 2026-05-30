@@ -1,0 +1,20 @@
+## Что сделано
+
+### HTTP-обработчики
+- \Index\ — список заметок с пагинацией и поиском
+- \Create\ / \Store\ — форма создания, валидация, flash-сообщение
+- \Edit\ / \Update\ — форма редактирования, проверка владельца, flash-сообщение
+- \Destroy\ — удаление с проверкой владельца, flash-сообщение
+- \TogglePin\ — pin/unpin через JSON API (Alpine.js)
+
+### View-слой
+- \iew.Render\ — обёртка: рендер контент-шаблона, получение flash + CSRF, оборачивание в base.html
+- \SetFlash\ / \GetFlash\ — flash-сообщения через cookie
+
+### Точка входа
+- \cmd/server/main.go\ — подключение БД, инициализация шаблонов, роутинг
+
+### Ключевые решения
+- Flash через cookie (нет сессий в проекте)
+- \NoteService interface\ в handler — для мока в тестах (сделано позже в feat/tests)
+- Gin Default + AuthRequired + CSRFProtection — middleware-цепочка для /notes
