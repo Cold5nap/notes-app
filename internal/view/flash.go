@@ -5,6 +5,7 @@ import (
 	"html/template"
 
 	"github.com/gin-gonic/gin"
+	"github.com/notes-app/internal/middleware"
 )
 
 var appTmpl *template.Template
@@ -44,7 +45,7 @@ func GetFlash(c *gin.Context) *FlashMessage {
 
 func Render(c *gin.Context, contentTemplate string, data any) {
 	flash := GetFlash(c)
-	token, _ := c.Cookie("csrf_token")
+	token := middleware.GetCSRFToken(c)
 
 	var buf bytes.Buffer
 	err := appTmpl.ExecuteTemplate(&buf, contentTemplate, gin.H{

@@ -12,28 +12,51 @@ import (
 const (
 	csrfCookieName = "csrf_token"
 	csrfFormField  = "_csrf"
+	csrfHeader     = "X-CSRF-Token"
 	csrfKeyLen     = 32
+	csrfCtxKey     = "csrf_token"
 )
 
 func CSRFProtection() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.Method == http.MethodPost {
 			cookieToken, err := c.Cookie(csrfCookieName)
-			formToken := c.PostForm(csrfFormField)
+			if err != nil || cookieToken == "" {
+				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "CSRF token mismatch"})
+				return
+			}
 
-			if err != nil || cookieToken == "" || formToken == "" || cookieToken != formToken {
+			requestToken := c.PostForm(csrfFormField)
+			if requestToken == "" {
+				requestToken = c.GetHeader(csrfHeader)
+			}
+
+			if requestToken == "" || cookieToken != requestToken {
 				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "CSRF token mismatch"})
 				return
 			}
 		}
 
-		if _, err := c.Cookie(csrfCookieName); err != nil {
-			token := generateCSRFToken()
-			c.SetCookie(csrfCookieName, token, 3600, "/", "", false, true)
-		}
+		token := ensureCSRFToken(c)
+		c.Set(csrfCtxKey, token)
 
 		c.Next()
 	}
+}
+
+func GetCSRFToken(c *gin.Context) string {
+	v, _ := c.Get(csrfCtxKey)
+	token, _ := v.(string)
+	return token
+}
+
+func ensureCSRFToken(c *gin.Context) string {
+	if token, err := c.Cookie(csrfCookieName); err == nil && token != "" {
+		return token
+	}
+	token := generateCSRFToken()
+	c.SetCookie(csrfCookieName, token, 3600, "/", "", false, true)
+	return token
 }
 
 func generateCSRFToken() string {
