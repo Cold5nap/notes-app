@@ -1,4 +1,4 @@
-package handler
+п»їpackage handler
 
 import (
 	"context"
@@ -58,7 +58,7 @@ func (h *NotesHandler) Store(c *gin.Context) {
 	if err := c.ShouldBind(&form); err != nil {
 		view.Render(c, "notes/form", gin.H{
 			"note":   form,
-			"errors": model.ValidationErrors{"_form": "Неверные данные формы"},
+			"errors": model.ValidationErrors{"_form": "РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ С„РѕСЂРјС‹"},
 		})
 		return
 	}
@@ -76,7 +76,7 @@ func (h *NotesHandler) Store(c *gin.Context) {
 		return
 	}
 
-	view.SetFlash(c, "Заметка создана", "success")
+	view.SetFlash(c, "Р—Р°РјРµС‚РєР° СЃРѕР·РґР°РЅР°", "success")
 	c.Redirect(http.StatusFound, "/notes")
 	_ = note
 }
@@ -117,7 +117,7 @@ func (h *NotesHandler) Update(c *gin.Context) {
 	if err := c.ShouldBind(&form); err != nil {
 		view.Render(c, "notes/form", gin.H{
 			"note":   form,
-			"errors": model.ValidationErrors{"_form": "Неверные данные формы"},
+			"errors": model.ValidationErrors{"_form": "РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ С„РѕСЂРјС‹"},
 		})
 		return
 	}
@@ -139,7 +139,7 @@ func (h *NotesHandler) Update(c *gin.Context) {
 		return
 	}
 
-	view.SetFlash(c, "Заметка обновлена", "success")
+	view.SetFlash(c, "Р—Р°РјРµС‚РєР° РѕР±РЅРѕРІР»РµРЅР°", "success")
 	c.Redirect(http.StatusFound, "/notes")
 	_ = note
 }
@@ -161,7 +161,7 @@ func (h *NotesHandler) Destroy(c *gin.Context) {
 		return
 	}
 
-	view.SetFlash(c, "Заметка удалена", "success")
+	view.SetFlash(c, "Р—Р°РјРµС‚РєР° СѓРґР°Р»РµРЅР°", "success")
 	c.Redirect(http.StatusFound, "/notes")
 }
 
