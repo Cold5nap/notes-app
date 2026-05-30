@@ -1,0 +1,47 @@
+{{define "notes/index"}}
+<div class="notes-toolbar">
+    <a href="/notes/create" class="btn btn-primary">+ Новая заметка</a>
+    <form action="/notes" method="GET" class="search-form">
+        <input type="text" name="q" value="{{.data.Query}}" placeholder="Поиск по заголовку...">
+        <button type="submit">Найти</button>
+    </form>
+</div>
+
+{{if not .data.Items}}
+    <p class="empty">Нет заметок</p>
+{{else}}
+    <div class="notes-grid">
+        {{range .data.Items}}
+        <div class="note-card" style="border-top-color: {{.Color}};" x-data="{ pinned: {{.IsPinned}} }">
+            <div class="note-card-header">
+                <h3>{{.Title}}</h3>
+                <button
+                    class="pin-btn"
+                    :class="{ pinned: pinned }"
+                    @click="
+                        fetch('/notes/{{.ID}}/toggle-pin', { method: 'POST', headers: { 'X-CSRF-Token': '{{$.csrf}}' } })
+                            .then(r => r.json())
+                            .then(d => { pinned = d.is_pinned })
+                    "
+                    title="Закрепить"
+                >
+                    📌
+                </button>
+            </div>
+            {{if .Content}}
+            <p class="note-card-content">{{.Content}}</p>
+            {{end}}
+            <div class="note-card-actions">
+                <a href="/notes/{{.ID}}/edit" class="btn btn-sm">Редактировать</a>
+                <form action="/notes/{{.ID}}/delete" method="POST" style="display:inline">
+                    <input type="hidden" name="_csrf" value="{{$.csrf}}">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить заметку?')">Удалить</button>
+                </form>
+            </div>
+        </div>
+        {{end}}
+    </div>
+{{end}}
+
+{{template "notes/pagination" .data}}
+{{end}}
