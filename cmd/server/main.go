@@ -42,6 +42,10 @@ func main() {
 	r.SetHTMLTemplate(tmpl)
 	view.SetTemplates(tmpl)
 
+	r.GET("/", middleware.AuthRequired(), func(c *gin.Context) {
+		c.Redirect(302, "/notes")
+	})
+
 	r.GET("/login", func(c *gin.Context) {
 		c.HTML(200, "login.html", nil)
 	})
