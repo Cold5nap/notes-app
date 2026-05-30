@@ -37,7 +37,7 @@ func CSRFProtection() gin.HandlerFunc {
 			}
 		}
 
-		token := ensureCSRFToken(c)
+		token := EnsureCSRFToken(c)
 		c.Set(csrfCtxKey, token)
 
 		c.Next()
@@ -50,12 +50,12 @@ func GetCSRFToken(c *gin.Context) string {
 	return token
 }
 
-func ensureCSRFToken(c *gin.Context) string {
+func EnsureCSRFToken(c *gin.Context) string {
 	if token, err := c.Cookie(csrfCookieName); err == nil && token != "" {
 		return token
 	}
 	token := generateCSRFToken()
-	c.SetCookie(csrfCookieName, token, 3600, "/", "", false, true)
+	c.SetCookie(csrfCookieName, token, 3600, "/", "", CookieSecure, true)
 	return token
 }
 

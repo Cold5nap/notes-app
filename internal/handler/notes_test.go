@@ -217,7 +217,7 @@ func TestUpdate_Success(t *testing.T) {
 func TestUpdate_InvalidID(t *testing.T) {
 	r, _ := setupTest()
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest("POST", "/notes/abc/edit", nil)
+	req := httptest.NewRequest("POST", "/notes/abc", nil)
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusNotFound {
 		t.Errorf("expected 404, got %d", w.Code)

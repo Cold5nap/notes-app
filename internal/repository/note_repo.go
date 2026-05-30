@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 
 	"github.com/notes-app/internal/model"
 )
@@ -90,7 +89,6 @@ func (r *NoteRepo) Create(ctx context.Context, n *model.Note) error {
 }
 
 func (r *NoteRepo) Update(ctx context.Context, n *model.Note) error {
-	n.UpdatedAt = n.CreatedAt // will be set by RETURNING
 	err := r.db.QueryRowContext(ctx,
 		`UPDATE notes SET title = $1, content = $2, color = $3, updated_at = NOW()
 		 WHERE id = $4
@@ -124,12 +122,3 @@ func (r *NoteRepo) TogglePin(ctx context.Context, id int) (bool, error) {
 	return pinned, nil
 }
 
-// BuildSearchCondition returns a WHERE clause and args for optional title search.
-// Used by List, but kept separate for clarity.
-func buildSearchCondition(query string, startIdx int) (string, []any) {
-	q := strings.TrimSpace(query)
-	if q == "" {
-		return "", nil
-	}
-	return fmt.Sprintf(" AND title ILIKE '%%' || $%d || '%%'", startIdx), []any{q}
-}

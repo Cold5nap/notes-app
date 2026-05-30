@@ -6,8 +6,16 @@ import (
 	"math"
 
 	"github.com/notes-app/internal/model"
-	"github.com/notes-app/internal/repository"
 )
+
+type NoteRepository interface {
+	List(ctx context.Context, userID int, page, perPage int, query string) ([]model.Note, int, error)
+	GetByID(ctx context.Context, id int) (*model.Note, error)
+	Create(ctx context.Context, n *model.Note) error
+	Update(ctx context.Context, n *model.Note) error
+	Delete(ctx context.Context, id int) error
+	TogglePin(ctx context.Context, id int) (bool, error)
+}
 
 const PerPage = 20
 
@@ -18,16 +26,19 @@ var (
 )
 
 type NoteService struct {
-	repo *repository.NoteRepo
+	repo NoteRepository
 }
 
-func NewNoteService(repo *repository.NoteRepo) *NoteService {
+func NewNoteService(repo NoteRepository) *NoteService {
 	return &NoteService{repo: repo}
 }
 
 func (s *NoteService) Index(ctx context.Context, userID, page int, query string) (model.Pagination, error) {
 	if page < 1 {
 		page = 1
+	}
+	if page > model.MaxPage {
+		page = model.MaxPage
 	}
 
 	items, total, err := s.repo.List(ctx, userID, page, PerPage, query)

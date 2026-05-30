@@ -5,9 +5,21 @@
     <a href="/notes?page={{.PrevPage}}{{if .Query}}&q={{.Query}}{{end}}" class="page-link">&laquo; Назад</a>
     {{end}}
 
+    {{$first := index .Pages 0}}
+    {{if gt $first 1}}
+    <a href="/notes?page=1{{if .Query}}&q={{.Query}}{{end}}" class="page-link">1</a>
+    {{if gt $first 2}}<span class="page-link page-ellipsis">...</span>{{end}}
+    {{end}}
+
     {{range .Pages}}
     <a href="/notes?page={{.}}{{if $.Query}}&q={{$.Query}}{{end}}"
        class="page-link{{if eq . $.Page}} active{{end}}">{{.}}</a>
+    {{end}}
+
+    {{$last := index .Pages (sub (len .Pages) 1)}}
+    {{if lt $last .TotalPages}}
+    {{if lt $last (sub .TotalPages 1)}}<span class="page-link page-ellipsis">...</span>{{end}}
+    <a href="/notes?page={{.TotalPages}}{{if .Query}}&q={{.Query}}{{end}}" class="page-link">{{.TotalPages}}</a>
     {{end}}
 
     {{if .HasNext}}

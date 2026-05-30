@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -33,9 +36,16 @@ func main() {
 	noteSvc := service.NewNoteService(noteRepo)
 	noteH := handler.NewNotesHandler(noteSvc)
 
+	middleware.SetCookieSecure(cfg.CookieSecure)
+
+	if os.Getenv("GIN_MODE") == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	r := gin.Default()
 	r.Static("/static", "./static")
-	tmpl := template.New("")
+	tmpl := template.New("").Funcs(template.FuncMap{
+		"sub": func(a, b int) int { return a - b },
+	})
 	tmpl = template.Must(tmpl.ParseGlob("templates/layout/*.html"))
 	tmpl = template.Must(tmpl.ParseGlob("templates/notes/*.html"))
 	tmpl = template.Must(tmpl.ParseGlob("templates/*.html"))
@@ -47,11 +57,24 @@ func main() {
 	})
 
 	r.GET("/login", func(c *gin.Context) {
-		c.HTML(200, "login.html", nil)
+		token := middleware.EnsureCSRFToken(c)
+		c.HTML(200, "login.html", gin.H{"csrf": token})
 	})
 	r.POST("/login", func(c *gin.Context) {
+		cookieToken, err := c.Cookie("csrf_token")
+		if err != nil || cookieToken == "" || cookieToken != c.PostForm("_csrf") {
+			c.String(http.StatusForbidden, "Invalid CSRF token")
+			return
+		}
+
 		idStr := c.PostForm("user_id")
-		c.SetCookie("user_id", idStr, 3600*24, "/", "", false, true)
+		id, err := strconv.Atoi(idStr)
+		if err != nil || id < 1 {
+			token := middleware.EnsureCSRFToken(c)
+			c.HTML(200, "login.html", gin.H{"csrf": token})
+			return
+		}
+		middleware.SetUserID(c, id)
 		c.Redirect(302, "/notes")
 	})
 

@@ -32,12 +32,21 @@ func NewNotesHandler(svc NoteService) *NotesHandler {
 
 func (h *NotesHandler) Index(c *gin.Context) {
 	userID := middleware.GetUserID(c)
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+
 	query := c.Query("q")
+	if len(query) > 200 {
+		query = query[:200]
+	}
 
 	pagination, err := h.svc.Index(c.Request.Context(), userID, page, query)
 	if err != nil {
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		c.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -63,7 +72,7 @@ func (h *NotesHandler) Store(c *gin.Context) {
 		return
 	}
 
-	note, err := h.svc.Create(c.Request.Context(), userID, form)
+	_, err := h.svc.Create(c.Request.Context(), userID, form)
 	if err != nil {
 		if errors.Is(err, service.ErrInvalidInput) {
 			view.Render(c, "notes/form", gin.H{
@@ -72,13 +81,13 @@ func (h *NotesHandler) Store(c *gin.Context) {
 			})
 			return
 		}
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		c.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	view.SetFlash(c, "Заметка создана", "success")
 	c.Redirect(http.StatusFound, "/notes")
-	_ = note
 }
 
 func (h *NotesHandler) Edit(c *gin.Context) {
@@ -95,7 +104,8 @@ func (h *NotesHandler) Edit(c *gin.Context) {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
 		}
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		c.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -122,7 +132,7 @@ func (h *NotesHandler) Update(c *gin.Context) {
 		return
 	}
 
-	note, err := h.svc.Update(c.Request.Context(), id, userID, form)
+	_, err = h.svc.Update(c.Request.Context(), id, userID, form)
 	if err != nil {
 		if errors.Is(err, service.ErrNotFound) || errors.Is(err, service.ErrNotOwned) {
 			c.AbortWithStatus(http.StatusNotFound)
@@ -135,13 +145,13 @@ func (h *NotesHandler) Update(c *gin.Context) {
 			})
 			return
 		}
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		c.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	view.SetFlash(c, "Заметка обновлена", "success")
 	c.Redirect(http.StatusFound, "/notes")
-	_ = note
 }
 
 func (h *NotesHandler) Destroy(c *gin.Context) {
@@ -157,7 +167,8 @@ func (h *NotesHandler) Destroy(c *gin.Context) {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
 		}
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		c.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -179,7 +190,8 @@ func (h *NotesHandler) TogglePin(c *gin.Context) {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
 		}
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		c.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 

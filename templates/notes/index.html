@@ -8,7 +8,11 @@
 </div>
 
 {{if not .data.Items}}
+    {{if .data.Query}}
+    <p class="empty">Ничего не найдено по запросу «{{.data.Query}}»</p>
+    {{else}}
     <p class="empty">Нет заметок</p>
+    {{end}}
 {{else}}
     <div class="notes-grid">
         {{range .data.Items}}

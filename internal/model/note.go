@@ -38,6 +38,10 @@ func (f *NoteForm) Validate() ValidationErrors {
 		errs["title"] = "Заголовок не может быть длиннее 255 символов"
 	}
 
+	if len(f.Content) > 10000 {
+		errs["content"] = "Содержание не может быть длиннее 10000 символов"
+	}
+
 	if f.Color != "" && !hexColor.MatchString(f.Color) {
 		errs["color"] = "Цвет должен быть валидным hex-кодом"
 	}

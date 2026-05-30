@@ -7,6 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var CookieSecure bool
+
+func SetCookieSecure(secure bool) {
+	CookieSecure = secure
+}
+
 const (
 	SessionUserID = "user_id"
 )
@@ -50,5 +56,5 @@ func getUserID(c *gin.Context) int {
 
 // SetUserID устанавливает cookie user_id (для имитации логина).
 func SetUserID(c *gin.Context, userID int) {
-	c.SetCookie("user_id", strconv.Itoa(userID), 3600*24, "/", "", false, true)
+	c.SetCookie("user_id", strconv.Itoa(userID), 3600*24, "/", "", CookieSecure, true)
 }

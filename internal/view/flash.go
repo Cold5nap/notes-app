@@ -3,6 +3,7 @@ package view
 import (
 	"bytes"
 	"html/template"
+	"log"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,7 @@ type FlashMessage struct {
 const flashCookieName = "flash_message"
 
 func SetFlash(c *gin.Context, text, msgType string) {
-	c.SetCookie(flashCookieName, msgType+"|"+text, 0, "/", "", false, true)
+	c.SetCookie(flashCookieName, msgType+"|"+text, 0, "/", "", middleware.CookieSecure, true)
 }
 
 func GetFlash(c *gin.Context) *FlashMessage {
@@ -32,7 +33,7 @@ func GetFlash(c *gin.Context) *FlashMessage {
 		return nil
 	}
 
-	c.SetCookie(flashCookieName, "", -1, "/", "", false, true)
+	c.SetCookie(flashCookieName, "", -1, "/", "", middleware.CookieSecure, true)
 
 	parts := strings.SplitN(cookie, "|", 2)
 	if len(parts) != 2 {
@@ -55,7 +56,8 @@ func Render(c *gin.Context, contentTemplate string, data any) {
 		"csrf": token,
 	})
 	if err != nil {
-		c.String(500, "template error: %v", err)
+		log.Printf("template error: %v", err)
+		c.String(500, "Internal Server Error")
 		return
 	}
 
