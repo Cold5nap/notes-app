@@ -1,8 +1,8 @@
-{{define "notes/pagination"}}
+﻿{{define "notes/pagination"}}
 {{if gt .TotalPages 1}}
 <div class="pagination">
     {{if .HasPrev}}
-    <a href="/notes?page={{.PrevPage}}{{if .Query}}&q={{.Query}}{{end}}" class="page-link">&laquo; Назад</a>
+    <a href="/notes?page={{.PrevPage}}{{if .Query}}&q={{.Query}}{{end}}" class="page-link">&laquo; РќР°Р·Р°Рґ</a>
     {{end}}
 
     {{range .Pages}}
@@ -11,7 +11,7 @@
     {{end}}
 
     {{if .HasNext}}
-    <a href="/notes?page={{.NextPage}}{{if .Query}}&q={{.Query}}{{end}}" class="page-link">Вперёд &raquo;</a>
+    <a href="/notes?page={{.NextPage}}{{if .Query}}&q={{.Query}}{{end}}" class="page-link">Р’РїРµСЂС‘Рґ &raquo;</a>
     {{end}}
 </div>
 {{end}}

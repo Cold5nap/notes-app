@@ -1,14 +1,14 @@
-{{define "notes/index"}}
+﻿{{define "notes/index"}}
 <div class="notes-toolbar">
-    <a href="/notes/create" class="btn btn-primary">+ Новая заметка</a>
+    <a href="/notes/create" class="btn btn-primary">+ РќРѕРІР°СЏ Р·Р°РјРµС‚РєР°</a>
     <form action="/notes" method="GET" class="search-form">
-        <input type="text" name="q" value="{{.data.Query}}" placeholder="Поиск по заголовку...">
-        <button type="submit">Найти</button>
+        <input type="text" name="q" value="{{.data.Query}}" placeholder="РџРѕРёСЃРє РїРѕ Р·Р°РіРѕР»РѕРІРєСѓ...">
+        <button type="submit">РќР°Р№С‚Рё</button>
     </form>
 </div>
 
 {{if not .data.Items}}
-    <p class="empty">Нет заметок</p>
+    <p class="empty">РќРµС‚ Р·Р°РјРµС‚РѕРє</p>
 {{else}}
     <div class="notes-grid">
         {{range .data.Items}}
@@ -23,19 +23,19 @@
                             .then(r => r.json())
                             .then(d => { pinned = d.is_pinned })
                     "
-                    title="Закрепить"
+                    title="Р—Р°РєСЂРµРїРёС‚СЊ"
                 >
-                    📌
+                    рџ“Њ
                 </button>
             </div>
             {{if .Content}}
             <p class="note-card-content">{{.Content}}</p>
             {{end}}
             <div class="note-card-actions">
-                <a href="/notes/{{.ID}}/edit" class="btn btn-sm">Редактировать</a>
+                <a href="/notes/{{.ID}}/edit" class="btn btn-sm">Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ</a>
                 <form action="/notes/{{.ID}}/delete" method="POST" style="display:inline">
                     <input type="hidden" name="_csrf" value="{{$.csrf}}">
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить заметку?')">Удалить</button>
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('РЈРґР°Р»РёС‚СЊ Р·Р°РјРµС‚РєСѓ?')">РЈРґР°Р»РёС‚СЊ</button>
                 </form>
             </div>
         </div>
