@@ -1,0 +1,15 @@
+﻿## Что сделано
+
+### Исправления после первого ревью
+1. Flash-парсинг: cookie[0] / cookie[2:] заменён на strings.SplitN(cookie, "|", 2)
+   - Баг: cookie формата "success|Заметка удалена", cookie[0] давал первый байт "s", а не тип
+2. Удалены дублирующиеся {{define}} в base.html и login.html
+   - Go html/template сам создаёт шаблон из имени файла; повторный define вызывает panic
+3. UTF-8: все .html пересохранены из Windows-1251 в UTF-8
+4. GET / с middleware.AuthRequired(), редирект на /notes
+5. notes.go: *service.NoteService заменён на интерфейс NoteService; "errors": nil -> gin.H{}
+
+### Почему
+- Индексная нотация для куки была багом
+- Дублирующийся define — неочевидный баг Go html/template
+- UTF-8 — обязательное требование, русский текст
