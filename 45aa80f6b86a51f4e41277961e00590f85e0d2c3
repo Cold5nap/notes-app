@@ -1,0 +1,11 @@
+﻿## Что сделано
+
+### Docker
+- Dockerfile для сборки Go-приложения (multi-stage: builder + alpine)
+- docker-compose.yml с сервисами postgres (официальный образ 16) и app
+- Миграции копируются в образ для инициализации БД
+
+### Ключевые решения
+- Multi-stage build — минимальный размер финального образа (~15MB)
+- golang:1.26-alpine — соответствие go.mod
+- docker compose up -d postgres — БД запускается отдельно, миграции вручную через migrate
