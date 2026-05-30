@@ -1,0 +1,10 @@
+﻿## Что сделано
+
+### Исправление загрузки шаблонов
+- r.LoadHTMLGlob("templates/**/*") не работал — Go filepath.Glob не поддерживает **
+- Заменён на template.New("").ParseGlob("templates/layout/*.html") + ParseGlob("templates/notes/*.html") + ParseGlob("templates/*.html")
+- r.SetHTMLTemplate(tmpl) + view.SetTemplates(tmpl)
+
+### Почему
+- Go stdlib не поддерживает рекурсивный glob (**) — нужно явно перечислить директории
+- view.SetTemplates нужен для view.Render (рендер вне gin-контекста шаблона)
