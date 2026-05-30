@@ -1,0 +1,23 @@
+## Что сделано
+
+### Исправления по результатам повторного ревью
+
+**Критические баги:**
+- \login.html: panic при nil data\ — при неверном user_id в шаблон передавался nil, шаблон ожидает {{.csrf}}
+- \Dockerfile\ — Go 1.22→1.26 (несоответствие go.mod), Alpine 3.19→3.21
+- \DSN через конкатенацию\ — заменён на url.URL с экранированием @ : ? # в пароле
+
+**Архитектура:**
+- \NoteRepository interface\ — сервис отвязан от конкретной реализации, тестируем без БД
+- \CookieSecure\ — флаг Secure для всех cookie из env COOKIE_SECURE
+- \SessionSecret\ удалён (не использовался, CSRF использует crypto/rand)
+
+**Валидация:**
+- Content — max 10 000 символов (был DoS-вектор через TEXT без ограничения)
+- Page — max 1000 (был DoS-вектор через огромный OFFSET)
+
+**Code quality:**
+- \_ = c.AbortWithError\ → c.Error(err) + c.AbortWithStatus(500)
+- Pagination — слайдинг-окно ±5 страниц с первой/последней и многоточием
+- Alpine.js CDN — pinned v3.14.8 с SRI sha384-хешем
+- Login — CSRF-защита на форме входа
