@@ -3,6 +3,7 @@ package view
 import (
 	"bytes"
 	"html/template"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/notes-app/internal/middleware"
@@ -33,13 +34,14 @@ func GetFlash(c *gin.Context) *FlashMessage {
 
 	c.SetCookie(flashCookieName, "", -1, "/", "", false, true)
 
-	if len(cookie) < 2 {
+	parts := strings.SplitN(cookie, "|", 2)
+	if len(parts) != 2 {
 		return nil
 	}
 
 	return &FlashMessage{
-		Type: string(cookie[0]),
-		Text: cookie[2:],
+		Type: parts[0],
+		Text: parts[1],
 	}
 }
 
