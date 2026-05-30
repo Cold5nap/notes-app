@@ -1,0 +1,17 @@
+﻿## Что сделано
+
+### Шаблоны
+- base.html — layout с header, flash-сообщениями, meta-csrf-token, Alpine.js CDN
+- notes/index.html — сетка заметок с pin-кнопкой (Alpine.js), формой поиска, кнопкой создания
+- notes/form.html — форма создания/редактирования с 6-цветной палитрой, Alpine.js для выбора цвета
+- notes/pagination.html — пагинация с номерами страниц
+- login.html — страница входа по user_id
+
+### UI-фичи
+- Pin-кнопка с @click через fetch + X-CSRF-Token
+- Выбор цвета: клик по цветному кружку, заполнение hidden поля, бордер
+- Кастомный скроллбар, hover-эффекты
+
+### Ключевые решения
+- Server-rendered HTML без SPA — Alpine.js только для pin и цвета
+- x-data="{ pinned: {{.IsPinned}} }" — инициализация Alpine из Go-шаблона
