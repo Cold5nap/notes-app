@@ -1,0 +1,13 @@
+﻿## Что сделано
+
+### Handler-тесты
+- Написаны 21 тест для всех CRUD-операций + TogglePin
+- Mock-сервис (mockNoteService) с настраиваемыми функциями для каждого метода
+- setupTest: инициализация Gin в test-mode, мок-шаблон, middleware user_id=1
+- Покрыты: Success, ServiceError, InvalidID, NotFound, NotOwned, ValidationError
+- JSON-ответ TogglePin проверяется на ok=true и is_pinned=true
+
+### Почему
+- Интерфейс NoteService в handler нужен для подмены на mock без БД
+- Gin.TestMode отключает логирование в тестах
+- Шаблон-заглушка вместо реальных HTML — не нужно загружать шаблоны
