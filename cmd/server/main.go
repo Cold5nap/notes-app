@@ -35,12 +35,12 @@ func main() {
 
 	r := gin.Default()
 	r.Static("/static", "./static")
-	r.LoadHTMLGlob("templates/**/*")
-	r.LoadHTMLGlob("templates/*.html")
-
-	tmpl := template.Must(template.New("").ParseGlob("templates/**/*"))
-	extra := template.Must(tmpl.ParseGlob("templates/*.html"))
-	view.SetTemplates(extra)
+	tmpl := template.New("")
+	tmpl = template.Must(tmpl.ParseGlob("templates/layout/*.html"))
+	tmpl = template.Must(tmpl.ParseGlob("templates/notes/*.html"))
+	tmpl = template.Must(tmpl.ParseGlob("templates/*.html"))
+	r.SetHTMLTemplate(tmpl)
+	view.SetTemplates(tmpl)
 
 	r.GET("/login", func(c *gin.Context) {
 		c.HTML(200, "login.html", nil)
