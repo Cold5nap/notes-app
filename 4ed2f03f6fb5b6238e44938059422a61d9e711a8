@@ -1,0 +1,12 @@
+﻿## Что сделано
+
+### Исправление CSRF и Pin toggle
+- meta name="csrf-token" content="{{.csrf}}" добавлен в base.html
+- CSRF middleware принимает X-CSRF-Token из заголовка (для fetch/AJAX)
+- CSRF-токен хранится в gin.Context (c.Set) — доступен через middleware.GetCSRFToken(c) даже на первом GET
+- Удалён дублирующийся pin-обработчик из app.js (конфликтовал с Alpine @click)
+
+### Почему
+- Стандартный CSRF в форме (_csrf) не работает для fetch-запросов — нужен заголовок
+- Без контекстного токена первый GET не мог отдать CSRF в шаблон
+- app.js перехватывал клик по pin до Alpine — дублирование
