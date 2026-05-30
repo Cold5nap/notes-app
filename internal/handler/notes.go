@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"strconv"
@@ -12,11 +13,20 @@ import (
 	"github.com/notes-app/internal/view"
 )
 
-type NotesHandler struct {
-	svc *service.NoteService
+type NoteService interface {
+	Index(ctx context.Context, userID, page int, query string) (model.Pagination, error)
+	Create(ctx context.Context, userID int, form model.NoteForm) (*model.Note, error)
+	GetForUser(ctx context.Context, noteID, userID int) (*model.Note, error)
+	Update(ctx context.Context, noteID, userID int, form model.NoteForm) (*model.Note, error)
+	Delete(ctx context.Context, noteID, userID int) error
+	TogglePin(ctx context.Context, noteID, userID int) (bool, error)
 }
 
-func NewNotesHandler(svc *service.NoteService) *NotesHandler {
+type NotesHandler struct {
+	svc NoteService
+}
+
+func NewNotesHandler(svc NoteService) *NotesHandler {
 	return &NotesHandler{svc: svc}
 }
 
@@ -37,7 +47,7 @@ func (h *NotesHandler) Index(c *gin.Context) {
 func (h *NotesHandler) Create(c *gin.Context) {
 	view.Render(c, "notes/form", gin.H{
 		"note":   nil,
-		"errors": nil,
+		"errors": gin.H{},
 	})
 }
 
@@ -91,7 +101,7 @@ func (h *NotesHandler) Edit(c *gin.Context) {
 
 	view.Render(c, "notes/form", gin.H{
 		"note":   note,
-		"errors": nil,
+		"errors": gin.H{},
 	})
 }
 
